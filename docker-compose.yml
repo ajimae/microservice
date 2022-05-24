@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  users:
+    build: "./users"
+    ports:
+      - "8085:8085"
+    env_file:
+      - ./users/.env
+    volumes:
+      - ./.data/logs:/app/logs

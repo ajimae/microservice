@@ -1,0 +1,9 @@
+{
+  "name": "comments",
+  "version": "1.0.0",
+  "description": "user microservice",
+  "main": "index.js",
+  "author": "Chukwuemeka Ajima",
+  "license": "MIT",
+  "private": true
+}
