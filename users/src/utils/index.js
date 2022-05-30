@@ -5,6 +5,7 @@ const requestID = require('./uniqueRequestD');
 const ncrypt = require('./encrypt');
 const ResponseManager = require('./response');
 const formatData = require('./formatData');
+const generateToken = require('./http');
 
 module.exports = {
   logger,
@@ -13,5 +14,6 @@ module.exports = {
   requestID,
   ncrypt,
   formatData,
+  generateToken,
   ResponseManager
 }

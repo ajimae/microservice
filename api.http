@@ -1,0 +1,169 @@
+@authBasehUrl=http://localhost:8083/api/v1
+@commentBaseUrl=http://localhost:8084/api/v1
+@baseUrl=http://localhost:8085/api/v1
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyOGViZTVkYTFkNGY5MTNjOWQ1MWI2MSIsImVtYWlsIjoiamFuZS5kb2VAbWFpbC5jb20iLCJ1c2VybmFtZSI6ImphbmVfIiwiaXNTdXNwZW5kZWQiOmZhbHNlLCJyb2xlIjoicmVndWxhciIsImlhdCI6MTY1MzUyOTM1MywiZXhwIjoxNjU2MTIxMzUzfQ.1WZIXtBSZ9eMQ3loLZfk9xyq9mylKbUYAHNPnFLg0c8
+
+
+
+//------------------------------------**User Service**----------------------------------//
+### - login
+POST {{baseUrl}}/user/login HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "jane.doe@mail.com",
+  "password": "p@ssword"
+}
+
+
+### - signup
+POST {{baseUrl}}/user/signup HTTP/1.1
+Content-Type: application/json
+
+{
+  "contact": {
+    "firstName": "Jane",
+    "lastName": "Doe",
+    "email": "jane.doe@mail.com",
+    "username": "jane_"
+  },
+  "password": "p@ssword"
+}
+
+
+### - get specific user
+GET {{baseUrl}}/user HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "jane.doe@mail.com",
+  "username": "jane_"
+}
+
+
+### - get all users
+GET {{baseUrl}}/users HTTP/1.1
+Content-Type: application/json
+
+
+### - update user details
+PATCH {{baseUrl}}/user/628e1e938bd943dc454d0084
+Content-Type: application/json
+
+{
+  "firstName": "Jane88",
+  "lastName": "Doe99",
+  "password": "pass",
+  "email": "jane@mail.com"
+}
+
+
+### - suspend a user
+PATCH {{baseUrl}}/user HTTP/1.1
+Content-Type: application/json
+
+{
+  "username": "jane_"
+}
+
+
+### - delete a specific user
+DELETE {{baseUrl}}/user/628ebc52c5b050e5b85fffe0
+Content-Type: application/json
+
+
+//------------------------------------**Auth Service**----------------------------------//
+
+
+### - generate a user authentication token
+POST {{authBasehUrl}}/generate HTTP/1.1
+Content-Type: application/json
+
+{
+   "id": "628d9f1bf5751ecf7c1c5357",
+   "email": "jane.doe@mail.com",
+   "username": "jane_",
+   "isSuspended": false,
+   "role": "regular" 
+}
+
+
+### - verify user token
+POST {{authBasehUrl}}/verify HTTP/1.1
+authorization: Bearer {{token}}
+Content-Type: application/json
+
+
+
+
+
+
+//------------------------------------**Comment Service**----------------------------------//
+
+
+
+### - create a comment
+POST {{commentBaseUrl}}/comment HTTP/1.1
+authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "hashTags": ["oop", "c++", "c"],
+  "mentions": ["einstein", "newton", "turing"],
+  "text": "new ready stopIt is the new coment hashTags"
+}
+
+
+### - get single comment
+GET {{commentBaseUrl}}/comment/628f53e92ccb0098a92af0fc HTTP/1.1
+Content-Type: application/json
+
+
+### - get all comment data
+GET {{commentBaseUrl}}/comments HTTP/1.1
+Content-Type: application/json
+
+
+### - update comment data
+PATCH {{commentBaseUrl}}/comment/628f53e92ccb0098a92af0fc HTTP/1.1
+Content-Type: application/json
+
+{
+  "hashTags": ["rust"],
+  "mentions": ["maxwell"],
+  "text": "This is the new text you know..."
+}
+
+
+### - get all comment belonging to a specific user
+GET {{commentBaseUrl}}/user/628ebe5da1d4f913c9d51b61/comments HTTP/1.1
+Content-Type: application/json
+
+
+### - delete a specific comment
+DELETE  {{commentBaseUrl}}/comment/628f53e92ccb0098a92af0fc HTTP/1.1
+Content-Type: application/json
+
+
+###
+GET {{commentBaseUrl}}/aggregate/comments
+Content-Type: application/json
+
+{
+  "entity": "",
+  "combine": false,
+  "rank": 4
+}
+
+
+### - reverse proxy base endpoints
+GET http://localhost:8080/api/v1/comments
+Content-Type: application/json
+
+### - reverse proxy endpoints
+GET http://localhost:8080/api/v1/users
+Content-Type: application/json
+### - reverse proxy endpoints
+
+GET http://localhost:8080/api/v1/auth
+Content-Type: application/json

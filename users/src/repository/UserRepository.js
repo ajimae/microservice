@@ -44,7 +44,7 @@ class UserRepository {
    * @returns user documents
    */
   async getUsersData() {
-    return this.User.find();
+    return this.User.find({});
   }
 
   /**

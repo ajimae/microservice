@@ -1,4 +1,5 @@
 const httpStatus = require('http-status-codes');
+const { logger } = require('../utils');
 
 const BasicResponse = {
   success: false,

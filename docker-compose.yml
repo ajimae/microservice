@@ -1,6 +1,28 @@
 version: "3"
 
 services:
+
+  # auth service
+  auth:
+    build: "./auth"
+    ports:
+      - "8083:8083"
+    env_file:
+      - ./auth/.env
+    volumes:
+      - ./.data/auth/logs:/app/auth/logs
+
+  # comments service
+  comments:
+    build: "./comments"
+    ports:
+      - "8084:8084"
+    env_file:
+      - ./comments/.env
+    volumes:
+      - ./.data/comments/logs:/app/comments/logs
+
+  # users service
   users:
     build: "./users"
     ports:
@@ -8,4 +30,17 @@ services:
     env_file:
       - ./users/.env
     volumes:
-      - ./.data/logs:/app/logs
+      - ./.data/users/logs:/app/users/logs
+
+  # nginx
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./web/public:/srv/www/static
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - auth
+      - users
+      - comments

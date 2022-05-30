@@ -28,7 +28,8 @@ const appConfig = {
     dbHost: process.env.DATABASE_HOST || '127.0.0.1',
     dbPort: process.env.DATABASE_PORT || 27017,
     dbUser: encodeURIComponent(process.env.DATABASE_USER),
-    dbPassword: encodeURIComponent(process.env.DATABASE_PASSWORD)
+    dbPassword: encodeURIComponent(process.env.DATABASE_PASSWORD),
+    authServiceUrl: 'http://localhost:8083/api/v1',
   },
   production: {
     ...commonConfig,
@@ -43,7 +44,8 @@ const appConfig = {
     )}:${encodeURIComponent(process.env.DATABASE_PASSWORD)}@${process.env.DATABASE_HOST
       }/${process.env.DATABASE_NAME}?retryWrites=true&w=majority`,
     mongoAuth: process.env.MONGO_DB_AUTH,
-    logFormat: "combined"
+    authServiceUrl: process.env.AUTH_SERVICE_URL || 'http://localhost:8083/api/v1',
+    logFormat: "combined",
   }
 };
 
