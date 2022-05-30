@@ -12,29 +12,11 @@ module.exports = async (err, req, res, next) => {
     logger.error("---------------END OF ERROR(S)-----------------------");
   }
 
-  // if (err.name || err.error) {
-  //   if (err.name === "ValidationError" || (err.error && err.error.name === "ValidationError")) {
-  //     return ResponseManager.getResponseHandler(res).onError(
-  //       err.name || err.error.name,
-  //       HttpStatus.StatusCodes.BAD_REQUEST,
-  //       err.message || err.error.toString(),
-  //       err.errors || err.error.details
-  //     );
-  //   }
-  //   return ResponseManager.getResponseHandler(res).onError(
-  //     err.name,
-  //     err.status,
-  //     err.message,
-  //     err.data
-  //   );
-  // }
-
-  const errorMessage = process.env.NODE_ENV === "production" ? "Something bad happened!" : err.message;
-  const errorData = process.env.NODE_ENV === "production" ? {} : err.data || err;
+  const errorMessage = err.message ? err.message : 'Something went wrong!'
+  const errorData = err.data ? err.data : err;
   return ResponseManager.getResponseHandler(res).onError(
-    "InternalServerError",
-    err.status || HttpStatus.StatusCodes.INTERNAL_SERVER_ERROR,
     errorMessage,
+    err.status || HttpStatus.StatusCodes.INTERNAL_SERVER_ERROR,
     errorData
   );
 };

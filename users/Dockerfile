@@ -3,7 +3,7 @@ FROM alpine
 
 RUN apk add --update nodejs yarn
 
-WORKDIR /app
+WORKDIR /app/users
 
 COPY package*.json .
 
