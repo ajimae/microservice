@@ -1,83 +1,75 @@
-// /**
-//  * Creates and configures a logger
-//  */
-//  const { createLogger, format, transports } = require('winston');
+const customLevels = {
+  levels: {
+    trace: 5,
+    debug: 4,
+    info: 3,
+    warn: 2,
+    error: 1,
+    fatal: 0,
+  },
+  colors: {
+    trace: 'white',
+    debug: 'green',
+    info: 'green',
+    warn: 'yellow',
+    error: 'red',
+    fatal: 'red',
+  },
+};
 
-//  const logger = createLogger({
-//    level: 'info',
-//    format: format.combine(format.timestamp(), format.json()),
-//    transports: [
-//      new transports.Console(),
-//    ],
-//  });
- 
-//  module.exports = logger;
+const formatter = winston.format.combine(
+  winston.format.colorize(),
+  winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+  winston.format.splat(),
+  winston.format.printf((info) => {
+    const { timestamp, level, message, ...meta } = info;
 
+    return `${timestamp} [${level}]: ${message} ${Object.keys(meta).length ? JSON.stringify(meta, null, 2) : ''
+      }`;
+  }),
+);
 
-/**
- * @module lib/logger
- * @description Configures a custom logger for logging errors, and results of certain operations.
- */
+class Logger {
+  constructor() {
+    const prodTransport = new winston.transports.File({
+      filename: 'logs/error.log',
+      level: 'error',
+    });
+    const transport = new winston.transports.Console({
+      format: formatter,
+    });
+    this.logger = winston.createLogger({
+      level: isDevEnvironment() ? 'trace' : 'error',
+      levels: customLevels.levels,
+      transports: [isDevEnvironment() ? transport : prodTransport],
+    });
+    winston.addColors(customLevels.colors);
+  }
 
- const winston = require('winston');
- const { format } = require('winston');
- const DailyRotateFile = require('winston-daily-rotate-file');
- 
- /**
-  * Stores all the log messages emitted by the server
-  */
- const serverLogTransport = new DailyRotateFile({
-   filename: "server-%DATE%.log",
-   maxFiles: "30d",
-   dirname: "./logs/server",
-   format: winston.format.combine(
-     winston.format.timestamp({
-       format: "YYYY-MM-DD HH:mm:ss",
-     }),
-     winston.format.json()
-   ),
- });
- 
- /**
-  * Stores all the error log messages emitted by the server
-  * i.e log messages with level set to error
-  */
- const errorLogTransport = new DailyRotateFile({
-   level: "error",
-   filename: "error-%DATE%.log",
-   maxFiles: "30d",
-   dirname: "./logs/errors",
-   format: winston.format.combine(
-     winston.format.timestamp({
-       format: "YYYY-MM-DD HH:mm:ss",
-     }),
-     winston.format.json()
-   ),
- });
- 
- const logger = winston.createLogger({
-   level: "info",
-   transports: [
-     new winston.transports.Console({
-       format: format.combine(
-         winston.format.colorize(),
-         format.timestamp({
-           format: "YYYY-MM-DD HH:mm:ss",
-         }),
-         format.simple()
-       ),
-     }),
-     serverLogTransport,
-     errorLogTransport,
-   ],
-   // Stores all uncaught exceptions
-   exceptionHandlers: [
-     new winston.transports.File({
-       filename: "exceptions.log",
-       dirname: "./logs",
-     }),
-   ],
- });
- 
-module.exports = logger;
- 
+  trace(msg, meta = {}) {
+    this.logger.log('trace', msg, meta);
+  }
+
+  debug(msg, meta) {
+    this.logger.debug(msg, meta);
+  }
+
+  info(msg, meta) {
+    this.logger.info(msg, meta);
+  }
+
+  warn(msg, meta) {
+    this.logger.warn(msg, meta);
+  }
+
+  error(msg, meta) {
+    this.logger.error(msg, meta);
+  }
+
+  fatal(msg, meta) {
+    this.logger.log('fatal', msg, meta);
+  }
+}
+
+const logger = new Logger()
+module.exports = logger
